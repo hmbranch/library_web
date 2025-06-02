@@ -57,11 +57,11 @@
             </form>
             
             <div class="links">
-                <a href="${pageContext.request.contextPath}/login">이미 계정이 있으신가요? 로그인</a>
+                <a href="/library/login">이미 계정이 있으신가요? 로그인</a>
             </div>
             
             <div class="back-home">
-                <a href="${pageContext.request.contextPath}/">← 홈으로 돌아가기</a>
+                <a href="/library">← 홈으로 돌아가기</a>
             </div>
         </div>
     </div>

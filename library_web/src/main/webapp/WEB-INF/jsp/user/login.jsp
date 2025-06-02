@@ -53,7 +53,7 @@
             </div>
             
             <div class="back-home">
-                <a href="${pageContext.request.contextPath}/">← 홈으로 돌아가기</a>
+                <a href="/library">← 홈으로 돌아가기</a>
             </div>
         </div>
     </div>
