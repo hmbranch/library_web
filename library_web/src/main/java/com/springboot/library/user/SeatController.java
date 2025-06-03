@@ -33,7 +33,7 @@ public class SeatController {
         mav.addObject("loginUser", loginUser);
         mav.addObject("seats", allSeats);
         mav.addObject("stats", stats);
-        System.out.println("테스트중");
+        System.out.println("테스트중!테스트중!");
         return mav;
     }
     
