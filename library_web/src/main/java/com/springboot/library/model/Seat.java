@@ -1,5 +1,4 @@
 package com.springboot.library.model;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
@@ -11,18 +10,18 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Seat {
-    private Integer seatId;              // 좌석 ID (1~10)
-    private String seatName;             // 좌석 이름 (A1, A2, B1, B2 등)
-    private Boolean isOccupied;          // 사용 중 여부
-    private Boolean arduinoSignal;       // 아두이노 센서 신호
-    private String userId;               // 예약한 사용자 ID
-    private Date reservationStart;       // 예약 시작 시간 (Date 타입으로 변경)
-    private Date reservationEnd;         // 예약 종료 시간 (Date 타입으로 변경)
-    private Date lastUpdated;            // 마지막 업데이트 시간 (Date 타입으로 변경)
+    private Integer seatId;              
+    private String seatName;             
+    private Boolean isOccupied;          
+    private Boolean arduinoSignal;       
+    private String userId;               
+    private Date reservationStart;       
+    private Date reservationEnd;         
+    private Date lastUpdated;            
     
     // 좌석 상태를 확인하는 편의 메소드들
     public boolean isAvailable() {
-        return !isOccupied && !arduinoSignal;
+        return !isOccupied; // 단순하게 예약 여부만 체크
     }
     
     public boolean isReserved() {
@@ -33,27 +32,23 @@ public class Seat {
         return arduinoSignal != null && arduinoSignal;
     }
     
-    // 좌석 상태를 문자열로 반환
+    // 수정된 상태 텍스트
     public String getStatusText() {
-        if (isAvailable()) {
+        if (!isOccupied) {
             return "사용 가능";
         } else if (isReserved()) {
-            return "예약됨";
-        } else if (hasArduinoDetection()) {
-            return "사용 중";
+            return "사용 중"; // 예약된 상태는 바로 "사용 중"
         } else {
             return "점검 중";
         }
     }
     
-    // CSS 클래스명 반환 (화면 표시용)
+    // 수정된 CSS 클래스
     public String getStatusClass() {
-        if (isAvailable()) {
+        if (!isOccupied) {
             return "available";
         } else if (isReserved()) {
-            return "reserved";
-        } else if (hasArduinoDetection()) {
-            return "occupied";
+            return "occupied"; // 예약된 상태는 바로 "occupied"
         } else {
             return "maintenance";
         }

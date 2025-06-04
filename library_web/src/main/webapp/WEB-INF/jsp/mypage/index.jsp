@@ -1,5 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -93,11 +95,11 @@
                                     </div>
                                     <div class="arduino-status">
                                         <c:choose>
-                                            <c:when test="${reservation.arduinoSignal == true}">
-                                                <span class="status-indicator active">🟢 착석중</span>
+                                            <c:when test="${reservation.arduinoSignal}">
+                                                <span class="status-indicator active">🟢 사용 중</span>
                                             </c:when>
                                             <c:otherwise>
-                                                <span class="status-indicator inactive">⚪ 센서 미감지</span>
+                                                <span class="status-indicator inactive">🔴 비어있음</span>
                                             </c:otherwise>
                                         </c:choose>
                                     </div>
@@ -107,125 +109,23 @@
                                     <div class="time-info">
                                         <div class="time-item">
                                             <span class="time-label">예약 시작:</span>
-                                            <span class="time-value" id="start_${reservation.seatId}">
-                                                <script>
-                                                    (function() {
-                                                        try {
-                                                            // 날짜 문자열 확인
-                                                            const dateStr = '${reservation.reservationStart}';
-                                                            console.log('시작 날짜 원본:', dateStr);
-                                                            
-                                                            // Date 객체 생성 시도
-                                                            let date;
-                                                            if (dateStr.includes('T')) {
-                                                                // ISO 형식인 경우
-                                                                date = new Date(dateStr);
-                                                            } else {
-                                                                // 다른 형식인 경우 파싱 시도
-                                                                date = new Date(dateStr.replace(/\s/g, 'T'));
-                                                            }
-                                                            
-                                                            console.log('파싱된 날짜:', date);
-                                                            
-                                                            if (isNaN(date.getTime())) {
-                                                                // 날짜 파싱 실패 시 원본 문자열 표시
-                                                                document.getElementById('start_${reservation.seatId}').textContent = dateStr;
-                                                                return;
-                                                            }
-                                                            
-                                                            const month = date.getMonth() + 1;
-                                                            const day = date.getDate();
-                                                            const hour = String(date.getHours()).padStart(2, '0');
-                                                            const minute = String(date.getMinutes()).padStart(2, '0');
-                                                            
-                                                            const formattedDate = `${month}월 ${day}일 ${hour}:${minute}`;
-                                                            document.getElementById('start_${reservation.seatId}').textContent = formattedDate;
-                                                            
-                                                        } catch (error) {
-                                                            console.error('날짜 파싱 오류:', error);
-                                                            document.getElementById('start_${reservation.seatId}').textContent = '${reservation.reservationStart}';
-                                                        }
-                                                    })();
-                                                </script>
-                                            </span>
+                                            <span class="time-value">
+											    <fmt:formatDate value="${reservation.reservationStart}" pattern="yyyy년 M월 d일 HH:mm"/>
+											</span>
+
                                         </div>
                                         <div class="time-item">
                                             <span class="time-label">예약 종료:</span>
-                                            <span class="time-value" id="end_${reservation.seatId}">
-                                                <script>
-                                                    (function() {
-                                                        try {
-                                                            // 날짜 문자열 확인
-                                                            const dateStr = '${reservation.reservationEnd}';
-                                                            console.log('종료 날짜 원본:', dateStr);
-                                                            
-                                                            // Date 객체 생성 시도
-                                                            let date;
-                                                            if (dateStr.includes('T')) {
-                                                                // ISO 형식인 경우
-                                                                date = new Date(dateStr);
-                                                            } else {
-                                                                // 다른 형식인 경우 파싱 시도
-                                                                date = new Date(dateStr.replace(/\s/g, 'T'));
-                                                            }
-                                                            
-                                                            console.log('파싱된 날짜:', date);
-                                                            
-                                                            if (isNaN(date.getTime())) {
-                                                                // 날짜 파싱 실패 시 원본 문자열 표시
-                                                                document.getElementById('end_${reservation.seatId}').textContent = dateStr;
-                                                                return;
-                                                            }
-                                                            
-                                                            const month = date.getMonth() + 1;
-                                                            const day = date.getDate();
-                                                            const hour = String(date.getHours()).padStart(2, '0');
-                                                            const minute = String(date.getMinutes()).padStart(2, '0');
-                                                            
-                                                            const formattedDate = `${month}월 ${day}일 ${hour}:${minute}`;
-                                                            document.getElementById('end_${reservation.seatId}').textContent = formattedDate;
-                                                            
-                                                        } catch (error) {
-                                                            console.error('날짜 파싱 오류:', error);
-                                                            document.getElementById('end_${reservation.seatId}').textContent = '${reservation.reservationEnd}';
-                                                        }
-                                                    })();
-                                                </script>
-                                            </span>
+                                            <span class="time-value">
+											    <fmt:formatDate value="${reservation.reservationEnd}" pattern="yyyy년 M월 d일 HH:mm"/>
+											</span>
+
                                         </div>
                                     </div>
                                     
                                     <!-- 남은 시간 계산 및 표시 -->
                                     <div class="remaining-time" id="remaining_${reservation.seatId}">
-                                        <script>
-                                            (function() {
-                                                const endTimeStr = '${reservation.reservationEnd}';
-                                                const endTime = new Date(endTimeStr);
-                                                const element = document.getElementById('remaining_${reservation.seatId}');
-                                                
-                                                function updateRemainingTime() {
-                                                    const now = new Date();
-                                                    const diff = endTime - now;
-                                                    
-                                                    if (diff <= 0) {
-                                                        element.innerHTML = '<span class="expired">⏰ 예약 시간 만료</span>';
-                                                        return;
-                                                    }
-                                                    
-                                                    const hours = Math.floor(diff / (1000 * 60 * 60));
-                                                    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-                                                    
-                                                    let timeClass = 'normal';
-                                                    if (hours === 0 && minutes <= 30) timeClass = 'warning';
-                                                    if (hours === 0 && minutes <= 10) timeClass = 'danger';
-                                                    
-                                                    element.innerHTML = `<span class="remaining ${timeClass}">⏱️ 남은 시간: ${hours}시간 ${minutes}분</span>`;
-                                                }
-                                                
-                                                updateRemainingTime();
-                                                setInterval(updateRemainingTime, 60000); // 1분마다 업데이트
-                                            })();
-                                        </script>
+                                        <span class="remaining normal">⏱️ 예약 활성</span>
                                     </div>
                                 </div>
                                 
@@ -314,9 +214,6 @@
         setInterval(function() {
             location.reload();
         }, 30000);
-        
-        // 디버깅: 현재 시간 확인
-        console.log('현재 시간:', new Date().toLocaleString('ko-KR'));
     </script>
 </body>
 </html>
